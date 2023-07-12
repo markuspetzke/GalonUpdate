@@ -1,0 +1,10 @@
+# flyctl launch added from .gitignore
+#ignore ALL .env files
+**\*.env
+
+#ignore Text File
+**\*.txt
+
+#ignore settings.json
+**\.vscode
+fly.toml
