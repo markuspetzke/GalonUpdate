@@ -3,7 +3,7 @@
 **\*.env
 
 #ignore Text File
-**\*.txt
+updates.txt
 
 #ignore settings.json
 **\.vscode
