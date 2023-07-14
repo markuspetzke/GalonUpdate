@@ -1,5 +1,3 @@
-# This example requires the 'members' and 'message_content' privileged intents to function.
-
 import os
 import discord
 from discord.ext import tasks, commands
@@ -15,7 +13,6 @@ intents.message_content = True
 
 bot = commands.Bot(command_prefix='?', intents=intents)
 host = os.getenv("HOST")
-
 
 
 @bot.event
@@ -56,7 +53,11 @@ async def update(ctx):
 @bot.command()
 async def start(ctx):
     print("startet")
-    update.start(ctx)
+    if update.is_running():
+        await ctx.send("Already Running")
+    else:
+        await ctx.send("Startet Task")
+        update.start(ctx)
 
 
 @bot.command()
@@ -73,7 +74,7 @@ async def status(ctx):
 async def last(ctx):
     response = getConn()
     file = open("updates.txt", "r")
-    await ctx.send("Last Update: " + file.readlines()[-1].split("#")[0])
+    await ctx.send("Last Update: " + response.getheader("Last-Modified") + "\n" + "Size: " + file.readlines()[-1].split("#")[1])
 
 
 bot.run(os.getenv("TOKEN"))
