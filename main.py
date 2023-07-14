@@ -18,6 +18,9 @@ host = os.getenv("HOST")
 @bot.event
 async def on_ready():
     print('We have logged in as {0.user}'.format(bot))
+    if not os.path.isfile("updates.txt"):
+        file = open("updates.txt", "w")
+        file.close()
 
 
 def getConn():
@@ -73,8 +76,7 @@ async def status(ctx):
 @bot.command()
 async def last(ctx):
     response = getConn()
-    file = open("updates.txt", "r")
-    await ctx.send("Last Update: " + response.getheader("Last-Modified") + "\n" + "Size: " + file.readlines()[-1].split("#")[1])
+    await ctx.send("Last Update: " + response.getheader("Last-Modified") + "\n" + "Size: " + response.getheader("Content-Length"))
 
 
 bot.run(os.getenv("TOKEN"))
