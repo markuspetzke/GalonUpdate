@@ -6,3 +6,7 @@ updates.txt
 
 #ignore settings.json
 .vscode
+
+#ignore node_modules
+node_modules
+

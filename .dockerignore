@@ -8,3 +8,6 @@ updates.txt
 #ignore settings.json
 **\.vscode
 fly.toml
+
+#ignore node_modules
+node_modules
