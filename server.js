@@ -1,13 +1,63 @@
-import express from 'express';
+import express from 'express'
 import { doc, getDoc } from "firebase/firestore"
 import db from "./init.js"
+import convert from "color-convert"
+import TuyAPI from 'tuyapi'
+import dotenv from 'dotenv'
+dotenv.config()
 
 const app = express()
 const port = 3000
 let oldTimer = 0;
 let jsonTimer = 0;
-let jsonData = null;
 let timeDoc = null;
+
+function convertDecToHex(decimal, chars) { 
+  return (decimal + Math.pow(16, chars)).toString(16).slice(-chars);
+} ;
+
+function convertRgbToHex(rgb) { 
+  let hsv = convert.rgb.hsv(rgb); 
+  let hex = hsv.map((data, index) => { 
+      if(index === 0) { 
+          return convertDecToHex(data, 4);
+       } 
+      else { 
+          return convertDecToHex(data * 10, 4); 
+      };
+  });
+  let hsvHex = hex.join(''); 
+  return hsvHex; 
+};
+
+const device = new TuyAPI({
+  id: process.env.DEVICEID,
+  key: process.env.DEVICEKEY});
+
+device.find().then(() => {
+  device.connect();
+});
+device.on('connected', () => {
+  console.log('Connected to device!');
+});
+device.on('disconnected', () => {
+  console.log('Disconnected from device.');
+});
+device.on('error', error => {
+  console.log('Error!', error);
+});
+
+app.get('/setColor/:r.:g.:b', async (req, res) => {
+  device.set({
+    multiple: true,
+    data: {
+        '21': 'colour',
+        '24': convertRgbToHex([req.params["r"], req.params["g"], req.params["b"]]),
+    }}).then(() => console.log('device was changed'))
+
+    res.send('Color changed');
+})
+
 
 app.get('/', (req, res) => {
   res.send('Hello World!')
